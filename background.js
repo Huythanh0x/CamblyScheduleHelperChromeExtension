@@ -11,15 +11,9 @@ chrome.runtime.onMessage.addListener(async function (message, sender, sendRespon
   if (message.message === "navigate_to_dashboard") {
     let loginUrl = "https://www.cambly.com/student/login?lang=en";
 
-    chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
-      var tab = tabs[0];
-      chrome.tabs.update(tab.id, { url: loginUrl });
-    });
+    chrome.tabs.create({ url: loginUrl });
   } else if (message.message == "navigate_to_favourite_tutor") {
     let tutorUrl = message.tutorUrl;
-    chrome.tabs.query({ active: true, currentWindow: true }, async function (tabs) {
-      var tab = tabs[0];
-      chrome.tabs.update(tab.id, { url: tutorUrl });
-    });
+    chrome.tabs.create({ url: tutorUrl });
   }
 });
