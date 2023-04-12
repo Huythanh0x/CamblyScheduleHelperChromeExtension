@@ -1,6 +1,6 @@
 export async function findAvailableLessonAtTutor(tutorId, selectedTime, lessonLength, callback) {
     const apiUrl = `https://www.cambly.com/getTutorSchedule?language=en&interfaceLanguage=en&tutor=${tutorId}&proType=&userId=${await getCurrentMainStudentId()}&_=1681036332267`
-
+    // alert(apiUrl)
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
@@ -11,7 +11,7 @@ export async function findAvailableLessonAtTutor(tutorId, selectedTime, lessonLe
                 let startTime = new Date(timeSlot.startTime.$date).getTime();
                 let endTime = new Date(timeSlot.endTime.$date).getTime();
 
-                if (selectedTime >= startTime && selectedTime + (lessonLength * 60 * 1000) <= endTime) {
+                if (selectedTime >= startTime && selectedTime + (lessonLength * 60 * 1000) <= endTime && Boolean(timeSlot.reservable)) {
                     let startTimeString = new Date(selectedTime).toLocaleString();
                     let endTimeString = new Date(endTime).toLocaleString();
 
