@@ -51,17 +51,9 @@ async function insertLessonToLessonTab(lessonObject) {
     loginBtn.innerHTML = "Login";
     loginBtn.addEventListener(
         "click",
-        (function (url) {
-            return function () {
-
-                if (accountObject != null) {
-                    sendFavouriteAccountMessage(tutorObject.url)
-                } else {
-                    alert("LIST ACCOUNTS IS EMPTY")
-                }
-            };
-        })(tutorObject.url)
-    )
+        function () {
+            sendFavouriteAccountMessage(tutorObject.url)
+        })
     const btnGroupEl = document.createElement("div");
     btnGroupEl.appendChild(loginBtn)
     //li
