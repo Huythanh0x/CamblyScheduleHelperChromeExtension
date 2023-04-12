@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+    <div class="tabs">
+        <div class="tab active">Accounts</div>
+        <div class="tab">Tutors</div>
+        <div class="tab">Search</div>
+        <div class="tab">Lesson</div>
+        <div class="tab">Help</div>
+    </div>
+    <div class="content active" id="tab1">
+        <div id="account-loading-overlay">
+            <div id="loading-dialog">
+                <div class="spinner"></div>
+            </div>
+        </div>
+        <div id="login-overlay">
+            <div id="dialog">
+                <h2>LOGIN NOW?</h2>
+                <p>You need to login to use this app</p>
+                <button id="dialog-login-button">Login</button>
+                <button id="dialog-cancel-button">Cancel</button>
+            </div>
+        </div>
+
+        <div class="main-tab-container">
+            <div class="profile">
+                <img class="user-avatar" src="./images/sample_avatar.png">
+                <div class="info">
+                    <span class="name">Loading</span>
+                    <span class="email">Loading@email.com <img class="subcribe-indicator"></span>
+                    <span class="subscription-status">Loading</span>
+                </div>
+            </div>
+
+            <!-- balance minute -->
+            <div class="minutes-group">
+                <div class="minutes">
+                    <span class="title">Anytime minutes:</span>
+                    <span class="value">Loading</span>
+                </div>
+                <div class="minutes">
+                    <span class="title">Total minutes today:</span>
+                    <span class="value">Unkown</span>
+                </div>
+            </div>
+
+            <div class="details">
+                <!-- expired plan -->
+                <div class="paid-group">
+                    <div class="paid">
+                        <span class="title"><img class="text-icon" src="./images/paid_date_icon.png"> Paid Date:</span>
+                        <span class="value">Loading</span>
+                    </div>
+                    <div class="expired">
+                        <span class="title"><img class="text-icon" src="./images/expired_date_icon.png"> Expired
+                            in:</span>
+                        <span class="value">Loading</span>
+                    </div>
+                </div>
+                <!-- lesson plan -->
+                <div class="paid-group">
+                    <div class="paid">
+                        <span class="title"><img class="text-icon" src="./images/clock_icon.png"> Minutes per
+                            day:</span>
+                        <span class="value">Loading</span>
+                    </div>
+                    <div class="expired">
+                        <span class="title"><img class="text-icon" src="./images/calendar_icon.png"> Lessons per
+                            week:</span>
+                        <span class="value">Loading</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navigate-button">
+                <span>OPEN CAMBLY WEBSITE</span>
+            </div>
+
+        </div>
+
+
+    </div>
+    <div class="content" id="tab2">
+        <ul id="tutorList">
+            <li class="tutor-item">
+                <h2 class="import-text">Import from main Account</h2>
+                <img src="./images/import_icon.png" class="import-btn" />
+            </li>
+        </ul>
+        <div class="loading-container-tutor">
+            <div class="loading"></div>
+        </div>
+
+    </div>
+    <div class="content" id="tab3">
+        <form>
+            <div class="input-row">
+                <label for="date">Date:</label>
+                <input type="number" id="date" name="date" min="1" max="31" required>
+                <label for="month">Month:</label>
+                <input type="number" id="month" name="month" min="1" max="12" required>
+                <label for="year">Year:</label>
+                <input type="number" id="year" name="year" min="2023" required>
+            </div>
+            <div class="input-row">
+                <label for="hour">Hour:</label>
+                <input type="number" id="hour" name="hour" min="0" max="23" required>
+                <label for="minute">Minute:</label>
+                <select id="minute" name="minute" required>
+                    <option selected="selected" value="0">00</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                </select>
+                <label for="lesson-length">Lesson:</label>
+                <select id="lesson-length" name="lesson-length">
+                    <option selected="selected" value="15">15'</option>
+                    <option value="30">30'</option>
+                    <option value="45">45'</option>
+                    <option value="60">60'</option>
+                    <option value="90">90'</option>
+                </select>
+            </div>
+            <button type="button" id="submit-button">Check Availability</button>
+        </form>
+        <div id="schedule-table"></div>
+        <ul id="availableLessonList"></ul>
+        <div class="loading-container-schedule">
+            <div class="loading"></div>
+        </div>
+    </div>
+    <div class="content" id="tab4">
+        <ul id="scheduledLessonList"></ul>
+        <div class="loading-container-lesson">
+            <div class="loading"></div>
+        </div>
+    </div>
+    <div class="content" id="tab5">
+        <div style="margin-top: 30px;">
+            <h1>Will at some notes later</h1>
+        </div>
+        <div style="margin-top: 20px;">
+        </div>
+    </div>
+
+</body>
+<script type="module" src="popup.js"></script>
+<script type="module" src="popup_js/display_profile.js"></script>
+<script type="module" src="popup_js/display_tutors_tab.js"></script>
+<script type="module" src="popup_js/display_lesson_tab.js"></script>
+<script type="module" src="popup_js/display_schedule_tab.js"></script>
+
+</html>
