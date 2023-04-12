@@ -1,4 +1,4 @@
-import { getLessonFromStudentId, fetchTutorDataFromTutorId, getCurrentMainStudentId } from '../data/api_request_helper.js';
+import { getLessonFromStudentId, fetchTutorDataFromTutorId, getCurrentMainStudentId, getAvatarUrlFrom } from '../data/api_request_helper.js';
 
 const scheduledLessonList = document.querySelector("#scheduledLessonList");
 const progressBarLessonEl = document.querySelector(".loading-container-lesson")
@@ -6,20 +6,22 @@ const progressBarLessonEl = document.querySelector(".loading-container-lesson")
 export async function mainDisplayLesson() {
     progressBarLessonEl.style.opacity = 1
     //TODO find all lesson
-    let lessonObject = await getLessonFromStudentId(getCurrentMainStudentId())
-    if (lessonObject != undefined) {
-        insertLessonToLessonTab(accountObject, lessonObject)
+    let listLessonObject = await getLessonFromStudentId(await getCurrentMainStudentId())
+    if (listLessonObject != undefined && listLessonObject != null) {
+        listLessonObject.forEach(lessonObject => {
+            insertLessonToLessonTab(lessonObject)
+        })
     } else {
         showMessage("THER IS NO INCOMING LESSON")
     }
     progressBarLessonEl.style.opacity = 0
 }
 
-async function insertLessonToLessonTab(accountObject, lessonObject) {
+async function insertLessonToLessonTab(lessonObject) {
     let tutorObject = await fetchTutorDataFromTutorId(lessonObject.tutorId)
     const avatarEl = document.createElement("img");
     avatarEl.classList.add("avatar");
-    avatarEl.setAttribute("src", tutorObject.src);
+    avatarEl.setAttribute("src", getAvatarUrlFrom(lessonObject.tutorId));
     avatarEl.addEventListener(
         "click",
         (function () {

@@ -122,19 +122,25 @@ export async function getLessonFromStudentId(studentId) {
         return null; // no lessons found for the student
     }
 
-    // extract the required information from the first lesson object
-    const lesson = data.result[0];
-    const scheduledMinutes = lesson.scheduledMinutes;
-    const scheduledStartAt = lesson.scheduledStartAt.$date;
-    const scheduledEndAt = lesson.scheduledEndAt.$date;
-    const studentIds = lesson.studentIds[0];
-    const tutorId = lesson.tutorId;
+    const lessons = data.result.map(lesson => {
+        const scheduledMinutes = lesson.scheduledMinutes;
+        const scheduledStartAt = lesson.scheduledStartAt.$date;
+        const scheduledEndAt = lesson.scheduledEndAt.$date;
+        const studentIds = lesson.studentIds[0];
+        const tutorId = lesson.tutorId;
 
-    return {
-        scheduledMinutes: scheduledMinutes,
-        scheduledStartAt: scheduledStartAt,
-        scheduledEndAt: scheduledEndAt,
-        studentIds: studentIds,
-        tutorId: tutorId,
-    };
+        return {
+            scheduledMinutes: scheduledMinutes,
+            scheduledStartAt: scheduledStartAt,
+            scheduledEndAt: scheduledEndAt,
+            studentIds: studentIds,
+            tutorId: tutorId,
+        };
+    });
+
+    return lessons;
+}
+
+export function getAvatarUrlFrom(tutorId){
+    return `https://camblyavatars.s3.amazonaws.com/${tutorId}s40`
 }
