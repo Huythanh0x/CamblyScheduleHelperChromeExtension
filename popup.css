@@ -40,7 +40,8 @@ body {
 .account-item,
 .tutor-item,
 .lesson-item,
-.schedule-item {
+.schedule-item,
+.import-container {
   display: flex;
   align-items: center;
   padding-top: 5px;
@@ -49,6 +50,10 @@ body {
   justify-content: space-between;
   padding-bottom: 5px;
   border: solid 1px darkblue;
+}
+
+.import-container{
+  margin-top: 20px;
 }
 
 .avatar {

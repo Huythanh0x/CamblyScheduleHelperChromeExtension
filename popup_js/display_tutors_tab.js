@@ -1,7 +1,7 @@
 import { fetchListOnlineTutor, getListTutorObjecFromListUrlLink, isUserNotLogin, getRealListFavouriteTutorIds, fetchTutorDataFromTutorId } from '../data/api_request_helper.js';
 import { onLoadFavouriteListTutorObjects, saveTutorToFavourite, deleteTutor } from '../data/local_datasource_helper.js';
 
-const tutorListEl = document.querySelector("#tutorList");
+let tutorListEl = document.querySelector("#tutorList");
 let listOnlineTutors = null
 const progressBarTutornEl = document.querySelector(".loading-container-tutor")
 
@@ -27,6 +27,10 @@ export async function mainDisplayTutors() {
             displayTutorList(listTutorObjects);
         }
     })
+}
+
+function clearDisplayTutorList(){
+    tutorListEl.innerHTML = "";
 }
 
 function displayTutorList(listTutorObjects) {
@@ -67,7 +71,8 @@ function displayTutorList(listTutorObjects) {
                     deleteTutor(listTutorObjects[i])
                     listTutorObjects.splice(index, 1)
                     tutorListEl.removeChild(tutorListEl.childNodes[index]);
-                    location.reload();
+                    clearDisplayTutorList()
+                    displayTutorList(listTutorObjects)
                     if (listTutorObjects.length == 0) {
                         showMessage("Empy list here, please add new by staring in the tutor profiles")
                     }
