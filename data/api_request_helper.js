@@ -65,7 +65,7 @@ export async function fetchTutorDataFromTutorId(tutorId) {
                 src: tutor.avatarUrlDict["80"],
                 name: tutor.displayName,
                 tutorLink: tutor.userlink,
-                id: tutor.userId,
+                tutorId: tutor.userId,
             };
             return result;
         })

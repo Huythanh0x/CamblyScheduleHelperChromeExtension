@@ -1,5 +1,5 @@
 import { fetchTutorDataFromTutorId, isUserNotLogin, findAvailableLessonAtTutor, getListTutorObjecFromListUrlLink, fetchListOnlineTutor } from '../data/api_request_helper.js';
-import { onLoadFavouriteListTutorLinks, saveSearchResultData, loadPreviousSearchResult, emptySearchResult } from '../data/local_datasource_helper.js';
+import { onLoadFavouriteListTutorObjects, saveSearchResultData, loadPreviousSearchResult, emptySearchResult } from '../data/local_datasource_helper.js';
 
 const dateInput = document.getElementById('date');
 const monthInput = document.getElementById('month');
@@ -49,18 +49,16 @@ export async function mainDisplaySchedule() {
         clearTheOldSearchResult()
         emptySearchResult()
         
-        onLoadFavouriteListTutorLinks(async function (listTutorLinks) {
-            let listTutorObject = await getListTutorObjecFromListUrlLink(listTutorLinks, await fetchListOnlineTutor())
-            if (listTutorObject.length == 0) {
+        onLoadFavouriteListTutorObjects(async function (listTutorObjects) {
+            if (listTutorObjects.length == 0) {
                 alert("THERE IS NO TUTOR TO START SEARCHING")
                 progressBarLessonEl.style.opacity = 0
                 return
             }
-            let promises = listTutorObject.map(tutorObject => {
+            let promises = listTutorObjects.map(tutorObject => {
                 return new Promise(async (resolve, reject) => {
-                    await findAvailableLessonAtTutor(tutorObject.id, selectedTime, lessonLength, async function (listAvailableLessons) {
+                    await findAvailableLessonAtTutor(tutorObject.tutorId, selectedTime, lessonLength, async function (listAvailableLessons) {
                         listAvailableLessons.forEach(async lessonObject => {
-                            let tutorObject = await fetchTutorDataFromTutorId(lessonObject.tutorId, lessonObject)
                             insertLessonToLessonTab(tutorObject, lessonObject)
                             saveSearchResultData(tutorObject, lessonObject)
                         })
@@ -133,9 +131,6 @@ function insertLessonToLessonTab(tutorObject, lessonObject) {
     li.classList.add("schedule-item");
     li.appendChild(avatarNameGroupEl);
     li.appendChild(btnGroupEl);
-    if (tutorObject.isOnline) {
-        li.style.backgroundColor = "lightgreen";
-    }
     availableLessonListEl.appendChild(li);
 }
 

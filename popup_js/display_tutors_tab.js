@@ -1,7 +1,7 @@
 import { fetchListOnlineTutor, getListTutorObjecFromListUrlLink, isUserNotLogin, getRealListFavouriteTutorIds, fetchTutorDataFromTutorId } from '../data/api_request_helper.js';
-import { onLoadFavouriteListTutorLinks, saveTutorToFavourite } from '../data/local_datasource_helper.js';
+import { onLoadFavouriteListTutorObjects, saveTutorToFavourite, deleteTutor } from '../data/local_datasource_helper.js';
 
-const tutorListEl = document.getElementById("tutorList");
+const tutorListEl = document.querySelector("#tutorList");
 let listOnlineTutors = null
 const progressBarTutornEl = document.querySelector(".loading-container-tutor")
 
@@ -12,12 +12,16 @@ export async function mainDisplayTutors() {
         return
     }
     onImportButtonClick()
-    onLoadFavouriteListTutorLinks(async function (listTutorLinks) {
+    onLoadFavouriteListTutorObjects(async function (listTutorObjects) {
         listOnlineTutors = await fetchListOnlineTutor()
-        let listTutorObjects = await getListTutorObjecFromListUrlLink(listTutorLinks, listOnlineTutors)
+        //TODO
+        listTutorObjects.forEach(tutorObject=>{
+            const foundOnlineTutor = listOnlineTutors.result.find((t) => t.tutorId === tutorObject.tutorId);
+            tutorObject['isOnline'] = Boolean(foundOnlineTutor != undefined && foundOnlineTutor != null)
+        })
         listTutorObjects = listTutorObjects.sort((a, b) => b.isOnline - a.isOnline)
         progressBarTutornEl.style.opacity = 0
-        if (listTutorLinks.length == 0) {
+        if (listTutorObjects.length == 0) {
             showMessage("Empty list here, please add new favrourite tutors on Cambly website and import them")
         } else {
             displayTutorList(listTutorObjects);
@@ -25,20 +29,19 @@ export async function mainDisplayTutors() {
     })
 }
 
-function displayTutorList(tutorList) {
-    const tutorListEl = document.querySelector("#tutorList");
-    for (let i = 0; i < tutorList.length; i++) {
-        if (tutorList[i] == undefined || tutorList[i] == null) continue
+function displayTutorList(listTutorObjects) {
+    for (let i = 0; i < listTutorObjects.length; i++) {
+        if (listTutorObjects[i] == undefined || listTutorObjects[i] == null) continue
         const avatarEl = document.createElement("img");
         avatarEl.classList.add("avatar");
-        avatarEl.setAttribute("src", tutorList[i].src);
+        avatarEl.setAttribute("src", listTutorObjects[i].src);
         avatarEl.addEventListener(
             "click",
             (function () {
-                sendFavouriteAccountMessage(tutorList[i].url)
+                sendFavouriteAccountMessage(listTutorObjects[i].url)
             }))
         const nameEl = document.createElement("h3");
-        nameEl.innerText = tutorList[i].name;
+        nameEl.innerText = listTutorObjects[i].name;
         //avatar button
         const avatarGroupEl = document.createElement("div");
         avatarGroupEl.classList.add("avatar-group")
@@ -54,18 +57,18 @@ function displayTutorList(tutorList) {
         loginBtn.addEventListener(
             "click",
             function () {
-                sendFavouriteAccountMessage(tutorList[i].url)
+                sendFavouriteAccountMessage(listTutorObjects[i].url)
             }
         )
         deleteBtn.addEventListener(
             "click",
             (function (index) {
                 return function () {
-                    deleteTutor(tutorList[i].tutorLink)
-                    tutorList.splice(index, 1)
+                    deleteTutor(listTutorObjects[i])
+                    listTutorObjects.splice(index, 1)
                     tutorListEl.removeChild(tutorListEl.childNodes[index]);
                     location.reload();
-                    if (tutorList.length == 0) {
+                    if (listTutorObjects.length == 0) {
                         showMessage("Empy list here, please add new by staring in the tutor profiles")
                     }
                 };
@@ -78,7 +81,7 @@ function displayTutorList(tutorList) {
         li.classList.add("tutor-item");
         li.appendChild(avatarGroupEl)
         li.appendChild(btnGroupEl);
-        if (tutorList[i].isOnline) {
+        if (listTutorObjects[i].isOnline) {
             li.style.backgroundColor = "lightgreen";
         }
         tutorListEl.appendChild(li);
@@ -87,22 +90,6 @@ function displayTutorList(tutorList) {
 
 function sendFavouriteAccountMessage(tUrl) {
     chrome.runtime.sendMessage({ message: "navigate_to_favourite_tutor", tutorUrl: tUrl }, function (response) { });
-}
-
-function deleteTutor(tutorLink) {
-    chrome.storage.sync.get("LIST_TUTOR_LINK", function (result) {
-        let listTutorLinks = result.LIST_TUTOR_LINK || [];
-
-        let index = listTutorLinks.findIndex((t) => t === tutorLink);
-
-        if (index === -1) {
-            alert(`Tutor "${tutorLink}" was not found in list`);
-            return;
-        }
-
-        listTutorLinks.splice(index, 1);
-        chrome.storage.sync.set({ LIST_TUTOR_LINK: listTutorLinks }, function () { });
-    });
 }
 
 function showMessage(message) {
@@ -120,8 +107,7 @@ function onImportButtonClick() {
             progressBarTutornEl.style.opacity = 1
             await Promise.all(realListFavouriteTutorIds.map(async realFavouriteTutorId => {
                 let tutorData = await fetchTutorDataFromTutorId(realFavouriteTutorId);
-                let tutorLink = tutorData.tutorLink;
-                saveTutorToFavourite(tutorLink);
+                saveTutorToFavourite(tutorData);
             }));
             alert(`Import all tutors succesfully`);
             location.reload()

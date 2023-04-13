@@ -1,43 +1,39 @@
-export function onLoadFavouriteListTutorLinks(callback) {
-    chrome.storage.sync.get("LIST_TUTOR_LINK", function (result) {
-        callback(result.LIST_TUTOR_LINK || [])
+export function onLoadFavouriteListTutorObjects(callback) {
+    chrome.storage.sync.get("listTutorObjects", function (result) {
+        callback(result.listTutorObjects || [])
     });
 }
 
-export function deleteTutor(tutorLink) {
-    chrome.storage.sync.get("LIST_TUTOR_LINK", function (result) {
-        let listTutorLinks = result.LIST_TUTOR_LINK || [];
+export function deleteTutor(tutorObject) {
+    chrome.storage.sync.get("listTutorObjects", function (result) {
+        let listtutorObjects = result.listTutorObjects || [];
         // Find index of tutor with matching name
-        let index = listTutorLinks.findIndex((t) => t === tutorLink);
+        let index = listtutorObjects.findIndex((t) => t.tutorId === tutorObject.tutorId);
         if (index === -1) {
-            alert(`Tutor "${tutorLink}" was not found in list`);
+            alert(`Tutor "${tutorObject}" was not found in list`);
             return;
         }
-        listTutorLinks.splice(index, 1);
-        chrome.storage.sync.set({ LIST_TUTOR_LINK: listTutorLinks }, function () {
+        listtutorObjects.splice(index, 1);
+        chrome.storage.sync.set({ listTutorObjects: listtutorObjects }, function () {
         });
     });
 }
 
-export function saveTutorToFavourite(tutorLink) {
-    chrome.storage.sync.get("LIST_TUTOR_LINK", function (result) {
-        let listTutorLinks = result.LIST_TUTOR_LINK || [];
-        if (!Array.isArray(listTutorLinks)) {
-            listTutorLinks = [];
+export function saveTutorToFavourite(tutorObject) {
+    chrome.storage.sync.get("listTutorObjects", function (result) {
+        let listtutorObjects = result.listTutorObjects || [];
+        if (!Array.isArray(listtutorObjects)) {
+            listtutorObjects = [];
         }
         // Check if tutor with same name already exists in list
-        for (let i = 0; i < listTutorLinks.length; i++) {
-            if (listTutorLinks[i] == tutorLink) {
+        for (let i = 0; i < listtutorObjects.length; i++) {
+            if (listtutorObjects[i].tutorId == tutorObject.tutorId) {
                 return
             }
         }
-        listTutorLinks.push(tutorLink);
-        console.log('added tutor ', tutorLink)
-        chrome.storage.sync.set({ LIST_TUTOR_LINK: listTutorLinks }, function () {
-            if (isAlert) {
-                alert(`Added tutor ${tutorLink} to the favourite list`)
-            }
-        });
+        listtutorObjects.push(tutorObject);
+        console.log('added tutor ', tutorObject)
+        chrome.storage.sync.set({ listTutorObjects: listtutorObjects }, function () {});
     });
 }
 

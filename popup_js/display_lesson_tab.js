@@ -6,9 +6,9 @@ const progressBarLessonEl = document.querySelector(".loading-container-lesson")
 export async function mainDisplayLesson() {
     progressBarLessonEl.style.opacity = 1
     //TODO find all lesson
-    let listLessonObject = await getLessonFromStudentId(await getCurrentMainStudentId())
-    if (listLessonObject != undefined && listLessonObject != null) {
-        listLessonObject.forEach(lessonObject => {
+    let listLessonObjects = await getLessonFromStudentId(await getCurrentMainStudentId())
+    if (listLessonObjects != undefined && listLessonObjects != null) {
+        listLessonObjects.forEach(lessonObject => {
             insertLessonToLessonTab(lessonObject)
         })
     } else {
@@ -61,9 +61,6 @@ async function insertLessonToLessonTab(lessonObject) {
     li.classList.add("lesson-item");
     li.appendChild(avatarNameGroupEl);
     li.appendChild(btnGroupEl);
-    if (tutorObject.isOnline) {
-        li.style.backgroundColor = "lightgreen";
-    }
 
     scheduledLessonList.appendChild(li);
 }
