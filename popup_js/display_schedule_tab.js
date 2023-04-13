@@ -38,7 +38,7 @@ export async function mainDisplaySchedule() {
         const lessonLength = lessonLengthInput.value;
 
         const selectedTime = new Date(`${month}/${date}/${year} ${hour}:${minute}:00`).getTime();
-        if (selectedTime == NaN) {
+        if (selectedTime == NaN || selectedTime < Date.now()) {
             alert("Invalid time please check again")
             return
         }
