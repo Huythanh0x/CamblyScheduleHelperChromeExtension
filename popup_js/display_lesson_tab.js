@@ -1,11 +1,16 @@
 import { getLessonFromStudentId, fetchTutorDataFromTutorId, getCurrentMainStudentId, getAvatarUrlFrom } from '../data/api_request_helper.js';
+import { loadIsUserNotLogin } from '../data/local_datasource_helper.js'
 
 const scheduledLessonList = document.querySelector("#scheduledLessonList");
 const progressBarLessonEl = document.querySelector(".loading-container-lesson")
 
 export async function mainDisplayLesson() {
     progressBarLessonEl.style.opacity = 1
-    //TODO find all lesson
+    if(await loadIsUserNotLogin()){
+        showMessage("This feature can only use afer login")
+        progressBarLessonEl.style.opacity = 0
+        return
+    }
     let listLessonObjects = await getLessonFromStudentId(await getCurrentMainStudentId())
     if (listLessonObjects != undefined && listLessonObjects != null) {
         listLessonObjects.forEach(lessonObject => {

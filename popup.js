@@ -2,14 +2,15 @@ import { mainDisplayProfile } from './popup_js/display_profile_tab.js';
 import { mainDisplayTutors } from './popup_js/display_tutors_tab.js';
 import { mainDisplaySchedule } from './popup_js/display_schedule_tab.js'
 import { mainDisplayLesson } from './popup_js/display_lesson_tab.js'
+import { loadIsUserNotLogin } from './data/local_datasource_helper.js'
 
-handleSwitchTab()
 mainDisplayProfile()
 mainDisplayTutors()
 mainDisplaySchedule()
 mainDisplayLesson()
+handleSwitchTab()
 
-function handleSwitchTab() {
+async function handleSwitchTab() {
   const tabs = document.querySelectorAll('.tab');
   const contents = document.querySelectorAll('.content');
   let activeTabIndex = parseInt(localStorage.getItem('activeTabIndex')) || 0;
@@ -27,7 +28,11 @@ function handleSwitchTab() {
       localStorage.setItem('activeTabIndex', activeTabIndex);
     });
   });
-  tabs[activeTabIndex].click();
+  if (await loadIsUserNotLogin()) {
+    tabs[0].click();
+  } else {
+    tabs[activeTabIndex].click();
+  }
 }
 
 function loadDataContentForActiveTab() {

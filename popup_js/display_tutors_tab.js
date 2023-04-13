@@ -1,12 +1,12 @@
 import { fetchListOnlineTutor, getListTutorObjecFromListUrlLink, isUserNotLogin, getRealListFavouriteTutorIds, fetchTutorDataFromTutorId } from '../data/api_request_helper.js';
-import { onLoadFavouriteListTutorObjects, saveTutorToFavourite, deleteTutor } from '../data/local_datasource_helper.js';
+import { onLoadFavouriteListTutorObjects, saveTutorToFavourite, deleteTutor, loadIsUserNotLogin } from '../data/local_datasource_helper.js';
 
 let tutorListEl = document.querySelector("#tutorList");
 let listOnlineTutors = null
 const progressBarTutornEl = document.querySelector(".loading-container-tutor")
 
 export async function mainDisplayTutors() {
-    if (await isUserNotLogin()) {
+    if (await loadIsUserNotLogin()) {
         showMessage("This feature can only use after login")
         progressBarTutornEl.style.opacity = 0
         return

@@ -59,3 +59,15 @@ export function loadPreviousSearchResult(callback) {
 export function emptySearchResult() {
     chrome.storage.local.set({ listSearchResult: [] })
 }
+
+export function updateUserLoginStatus(isUserNotLogin) {
+    chrome.storage.local.set({ isUerNotLogin: isUserNotLogin })
+}
+
+export function loadIsUserNotLogin() {
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.get('isUerNotLogin', (data) => {
+            resolve(data.isUerNotLogin);
+        });
+    });
+}

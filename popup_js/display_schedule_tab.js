@@ -1,5 +1,5 @@
 import { fetchTutorDataFromTutorId, isUserNotLogin, findAvailableLessonAtTutor, getListTutorObjecFromListUrlLink, fetchListOnlineTutor } from '../data/api_request_helper.js';
-import { onLoadFavouriteListTutorObjects, saveSearchResultData, loadPreviousSearchResult, emptySearchResult } from '../data/local_datasource_helper.js';
+import { onLoadFavouriteListTutorObjects, saveSearchResultData, loadPreviousSearchResult, emptySearchResult, loadIsUserNotLogin } from '../data/local_datasource_helper.js';
 
 const dateInput = document.getElementById('date');
 const monthInput = document.getElementById('month');
@@ -26,7 +26,7 @@ export async function mainDisplaySchedule() {
     })
 
     submitButton.addEventListener('click', async () => {
-        if (await isUserNotLogin()) {
+        if (await loadIsUserNotLogin()) {
             alert("This feature can only after login")
             return
         }

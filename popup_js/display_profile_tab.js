@@ -1,13 +1,16 @@
-import { getCurrentMainStudentId, isUserNotLogin } from '../data/api_request_helper.js';
+import { getCurrentMainStudentId, isUserNotLogin} from '../data/api_request_helper.js';
+import { loadIsUserNotLogin, updateUserLoginStatus } from '../data/local_datasource_helper.js';
 
 const overlay = document.getElementById('account-loading-overlay');
 const loadingDialog = document.getElementById('loading-dialog');
 
 export async function mainDisplayProfile() {
     showLoadingDialog()
-    if (await isUserNotLogin()) {
+    updateUserLoginStatus(await isUserNotLogin())
+    if(await loadIsUserNotLogin()){
         hideLoadingDialog()
-        openLoginDialog()
+        const container = document.querySelector('.main-tab-container');
+        attachLoginDialogTo(container)
         return
     }
 
@@ -105,8 +108,7 @@ function updateUI(userInfo, studentBalance) {
     // alert(document.querySelector(".subcribe-indicator")['src'])
 }
 
-function openLoginDialog() {
-    const container = document.querySelector('.main-tab-container');
+function attachLoginDialogTo(container) {
     const dialog = document.getElementById('login-overlay');
 
     container.style.position = 'relative';
