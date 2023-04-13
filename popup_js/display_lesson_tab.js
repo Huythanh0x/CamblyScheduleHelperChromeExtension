@@ -13,6 +13,7 @@ export async function mainDisplayLesson() {
     }
     let listLessonObjects = await getLessonFromStudentId(await getCurrentMainStudentId())
     if (listLessonObjects != undefined && listLessonObjects != null) {
+        listLessonObjects = listLessonObjects.sort((a, b) => b.scheduledStartAt - a.scheduledStartAt)
         listLessonObjects.forEach(lessonObject => {
             insertLessonToLessonTab(lessonObject)
         })
