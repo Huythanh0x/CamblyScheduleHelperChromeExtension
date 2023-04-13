@@ -40,3 +40,26 @@ export function saveTutorToFavourite(tutorLink) {
         });
     });
 }
+
+
+export function saveSearchResultData(tutorObject, lessonObject) {
+    loadPreviousSearchResult(function(listSearchResult){
+        listSearchResult.push({tutorObject:tutorObject, lessonObject: lessonObject})
+        chrome.storage.local.set({ listSearchResult: listSearchResult })
+    })
+}
+
+
+export function loadPreviousSearchResult(callback) {
+    chrome.storage.local.get('listSearchResult', (data) => {
+        if (data.listSearchResult != null || data.listSearchResult != undefined) {
+            callback(data.listSearchResult)
+        }else{
+            callback([])
+        }
+    });
+}
+
+export function emptySearchResult() {
+    chrome.storage.local.set({ listSearchResult: [] })
+}

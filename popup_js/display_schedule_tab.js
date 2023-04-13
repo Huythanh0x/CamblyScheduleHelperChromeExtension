@@ -1,5 +1,5 @@
 import { fetchTutorDataFromTutorId, isUserNotLogin, findAvailableLessonAtTutor, getListTutorObjecFromListUrlLink, fetchListOnlineTutor } from '../data/api_request_helper.js';
-import { onLoadFavouriteListTutorLinks } from '../data/local_datasource_helper.js';
+import { onLoadFavouriteListTutorLinks, saveSearchResultData, loadPreviousSearchResult, emptySearchResult } from '../data/local_datasource_helper.js';
 
 const dateInput = document.getElementById('date');
 const monthInput = document.getElementById('month');
@@ -12,10 +12,19 @@ const availableLessonListEl = document.querySelector("#availableLessonList");
 const progressBarLessonEl = document.querySelector(".loading-container-schedule")
 progressBarLessonEl.style.opacity = 0
 
-loadPreviousData()
 
 export async function mainDisplaySchedule() {
-    showMessage("Find your next lesson")
+    loadPreviousInputData()
+    loadPreviousSearchResult(function (listSearchResult) {
+        if(listSearchResult.length == 0 || listSearchResult == undefined || listSearchResult == null){
+            showMessage("Find your next lesson")
+        }else{
+            listSearchResult.forEach(searchResultObject=>{
+                insertLessonToLessonTab(searchResultObject.tutorObject, searchResultObject.lessonObject)
+            })
+        }
+    })
+
     submitButton.addEventListener('click', async () => {
         if (await isUserNotLogin()) {
             alert("This feature can only after login")
@@ -27,7 +36,7 @@ export async function mainDisplaySchedule() {
         const hour = hourInput.value;
         const minute = minuteInput.value;
         const lessonLength = lessonLengthInput.value;
-        clearTheOldSearchResult()
+
         const selectedTime = new Date(`${month}/${date}/${year} ${hour}:${minute}:00`).getTime();
         if (selectedTime == NaN) {
             alert("Invalid time please check again")
@@ -37,6 +46,9 @@ export async function mainDisplaySchedule() {
         // Save input values to localStorage
         localStorage.setItem('selectedTime', selectedTime);
         localStorage.setItem('lessonLength', lessonLength);
+        clearTheOldSearchResult()
+        emptySearchResult()
+        
         onLoadFavouriteListTutorLinks(async function (listTutorLinks) {
             let listTutorObject = await getListTutorObjecFromListUrlLink(listTutorLinks, await fetchListOnlineTutor())
             if (listTutorObject.length == 0) {
@@ -47,9 +59,10 @@ export async function mainDisplaySchedule() {
             let promises = listTutorObject.map(tutorObject => {
                 return new Promise(async (resolve, reject) => {
                     await findAvailableLessonAtTutor(tutorObject.id, selectedTime, lessonLength, async function (listAvailableLessons) {
-                        listAvailableLessons.forEach(async lesson => {
-                            let tutorObject = await fetchTutorDataFromTutorId(lesson.tutorId, lesson)
-                            insertLessonToLessonTab(tutorObject, lesson)
+                        listAvailableLessons.forEach(async lessonObject => {
+                            let tutorObject = await fetchTutorDataFromTutorId(lessonObject.tutorId, lessonObject)
+                            insertLessonToLessonTab(tutorObject, lessonObject)
+                            saveSearchResultData(tutorObject, lessonObject)
                         })
                         resolve()
                     })
@@ -57,8 +70,8 @@ export async function mainDisplaySchedule() {
             })
             await Promise.all(promises)
             progressBarLessonEl.style.opacity = 0
-            if(document.querySelectorAll(".schedule-item").length == 0){
-                alert("There is no lesson for this time")
+            if (document.querySelectorAll(".schedule-item").length == 0) {
+                alert(`There is no lesson at ${new Date(selectedTime).toLocaleString()}`)
                 showMessage("Find your next lesson")
             }
         })
@@ -109,9 +122,9 @@ function insertLessonToLessonTab(tutorObject, lessonObject) {
     loginBtn.innerHTML = "Schedule";
     loginBtn.addEventListener(
         "click",
-            function () {
-                sendFavouriteAccountMessage(tutorObject.url)
-            }
+        function () {
+            sendFavouriteAccountMessage(tutorObject.url)
+        }
     )
     const btnGroupEl = document.createElement("div");
     btnGroupEl.appendChild(loginBtn)
@@ -126,7 +139,7 @@ function insertLessonToLessonTab(tutorObject, lessonObject) {
     availableLessonListEl.appendChild(li);
 }
 
-function loadPreviousData() {
+function loadPreviousInputData() {
     try {
         const selectedTime = localStorage.getItem('selectedTime');
         const lessonLength = localStorage.getItem('lessonLength');
@@ -149,7 +162,7 @@ function loadPreviousData() {
 
 function sendFavouriteAccountMessage(tUrl) {
     chrome.runtime.sendMessage(
-        { message: "navigate_to_favourite_tutor", tutorUrl: tUrl},
+        { message: "navigate_to_favourite_tutor", tutorUrl: tUrl },
         function (response) { }
     );
 }
