@@ -67,6 +67,14 @@ async function insertLessonToLessonTab(lessonObject) {
     li.classList.add("lesson-item");
     li.appendChild(avatarNameGroupEl);
     li.appendChild(btnGroupEl);
+    //lessontag 
+    const lessonTimeTagEl = document.createElement("span")
+    lessonTimeTagEl.classList.add("lesson-time-tag")
+    lessonTimeTagEl.textContent = `${lessonObject.scheduledMinutes} minutes`
+    const tagGroup = document.createElement("div")
+    tagGroup.classList.add("time-tag-group")
+    tagGroup.appendChild(lessonTimeTagEl)
+    li.appendChild(tagGroup)
 
     scheduledLessonList.appendChild(li);
 }

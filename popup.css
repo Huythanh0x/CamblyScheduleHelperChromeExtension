@@ -52,6 +52,10 @@ body {
   border: solid 1px darkblue;
 }
 
+.lesson-item{
+  position: relative;
+}
+
 .import-container{
   margin-top: 20px;
 }
@@ -456,4 +460,23 @@ form {
   font-size: 20px;
   font-weight: 700;
   color: #5f05fb;
+}
+
+.time-tag-group{
+  position: absolute;
+  top: 2px;
+  left: 0;
+}
+
+.lesson-time-tag{
+  display: inline-block;
+  color: #fff;
+  margin-left: 10px;
+  padding: 6px;
+  border-radius: 20px;
+  background-color: #027030;
+  font-weight: 700;
+  font-size: 10px;
+  text-align: center;
+  white-space: nowrap;
 }
