@@ -30,5 +30,6 @@
     "activeTab",
     "scripting",
     "notifications"
-  ]
+  ],
+  "incognito": "not_allowed"
 }
