@@ -71,3 +71,17 @@ export function loadIsUserNotLogin() {
         });
     });
 }
+
+export function saveSearchResultTime(searchTime) {
+    chrome.storage.local.set({ searchTime: searchTime })
+}
+
+export function loadPreviousSearchResultTime(callback) {
+    chrome.storage.local.get('searchTime', (data) => {
+        if (data.searchTime != null && data.searchTime != undefined) {
+            callback(data.searchTime)
+        } else {
+            callback(0)
+        }
+    });
+}

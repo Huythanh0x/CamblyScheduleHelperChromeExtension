@@ -450,3 +450,10 @@ form {
   border-top-color: #3498db;
   animation: spin 1s ease-in-out infinite;
 }
+
+.search-result-time{
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #5f05fb;
+}

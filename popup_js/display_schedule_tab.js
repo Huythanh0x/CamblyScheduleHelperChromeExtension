@@ -1,5 +1,5 @@
 import { fetchTutorDataFromTutorId, isUserNotLogin, findAvailableLessonAtTutor, getListTutorObjecFromListUrlLink, fetchListOnlineTutor } from '../data/api_request_helper.js';
-import { onLoadFavouriteListTutorObjects, saveSearchResultData, loadPreviousSearchResult, emptySearchResult, loadIsUserNotLogin } from '../data/local_datasource_helper.js';
+import { onLoadFavouriteListTutorObjects, saveSearchResultData, loadPreviousSearchResult, emptySearchResult, loadIsUserNotLogin, saveSearchResultTime, loadPreviousSearchResultTime } from '../data/local_datasource_helper.js';
 
 const dateInput = document.getElementById('date');
 const monthInput = document.getElementById('month');
@@ -15,6 +15,12 @@ progressBarLessonEl.style.opacity = 0
 
 export async function mainDisplaySchedule() {
     loadPreviousInputData()
+    loadPreviousSearchResultTime(function(searchTime){
+        if(searchTime != 0){
+            let time = new Date(searchTime)
+            document.querySelector(".search-result-time").innerText =  `Search result: ${time.toLocaleTimeString()}`
+        }
+    })
     loadPreviousSearchResult(function (listSearchResult) {
         if(listSearchResult.length == 0 || listSearchResult == undefined || listSearchResult == null){
             showMessage("Find your next lesson")
@@ -61,6 +67,9 @@ export async function mainDisplaySchedule() {
                         listAvailableLessons.forEach(async lessonObject => {
                             insertLessonToLessonTab(tutorObject, lessonObject)
                             saveSearchResultData(tutorObject, lessonObject)
+                            let time = Date.now()
+                            saveSearchResultTime(time)
+                            document.querySelector(".search-result-time").innerText =  `Search result: ${new Date(time).toLocaleTimeString()}`
                         })
                         resolve()
                     })
